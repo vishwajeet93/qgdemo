@@ -1,0 +1,38 @@
+
+.side{
+  margin: 0;
+  padding: 0;
+  background-color:   #ff6666;
+//  position: fixed;
+  //  height: 100%;
+  overflow: auto;
+    left: 0;
+  //width: 85%;
+}
+.filler{
+  margin: 0;
+  padding: 0;
+  background-color:   #ff6666;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+    left: 0;
+width: 25%;
+}
+
+
+
+.nopad{
+    padding: 0;
+    background-color:   #ff6666;
+    padding-bottom: 100%;
+    margin-bottom: -100%;
+}
+@media (max-width: 767px) {
+  .nopad{
+    padding: 0;
+    margin-bottom: 0;
+
+  }
+
+}

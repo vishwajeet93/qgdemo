@@ -20,23 +20,8 @@ class File extends Component {
   onc(eve,results) {
 
       const [e, file] = results[0];
-      //this.props.dispatch(uploadFile(e.target.result));
-      //this.setState({content : e.target.result});
       console.log(e.target.result);
       this.setState({content : e.target.result});
-    // console.log("yeeyy");
-    // // var reader = new FileReader.readAsText();
-    // const formData = new FormData();
-    // formData.append('file',e.target.files[0]);
-    // console.log(e.target.files[0]);
-    // var selectedFile = event.target.files[0];
-    // console.log(event.target.result);
-    // reader.onload = function (event) {
-    //   var Content = event.target.result;
-    //   console.log(Content);
-    //   //jqDisplay.html('<img src="' + imageSrc + '" alt="uploaded Image">');
-    //   this.setState({content:Content});
-    // };
 
   }
   handleClick() {
@@ -64,38 +49,42 @@ class File extends Component {
       var j = 0;
       console.log(sents);
       this.setState({answers:sents});
+      var n = sents.length;
+      var j =0;
       for (i in sents){
 
         data[0].src = sents[i];
         dat = JSON.stringify(data);
   //      console.log(data);
-   var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-  var targetUrl = 'http://52.172.194.2:7784/translator/translate';
- fetch(proxyUrl +targetUrl, {
-   method: 'post',
-   headers: {
-     'Accept': 'application/json',
-     'Content-Type': 'application/json'
-   },
-//  mode : 'no-cors',
-  body: dat
-  })
-.then(res=> res.json())
-.then(res=> {
-  var v = {};
-  v.q = res[0][0]["tgt"];
-  v.a = res[0][0]["src"];
-  questions.push(v);
-  //console.log(questions);
-  this.setState({qnas: questions});
-});
+        var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        var targetUrl = 'http://52.172.194.2:7789/translator/translate';
+        fetch(proxyUrl +targetUrl, {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          //  mode : 'no-cors',
+          body: dat
+        })
+        .then(res=> res.json())
+        .then(res=> {
+          var v = {};
+          v.q = res[0][0]["tgt"];
+          v.a = res[0][0]["ans"];
+          questions.push(v);
+          //console.log(questions);
+          this.setState({qnas: questions});
+          if (j == n){
+            setTimeout(() => {
+              // Completed of async action, set loading state back
+              this.setState({ isLoading: false });
+            }, 1000);
+          }
+        });
       }
     }.bind(this),)
     // This probably where you would have an `ajax` call
-    setTimeout(() => {
-      // Completed of async action, set loading state back
-      this.setState({ isLoading: false });
-    }, 2000);
   }
   render(){
     var isLoading = this.state.isLoading;

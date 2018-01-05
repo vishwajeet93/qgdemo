@@ -44,8 +44,8 @@ function addBookmark() {
             contentType: "application/json",
             success: function(res) {
                 console.log(res);
-              qna.innerHTML +=  "<li class= list-group-item>" + res[0][0]["tgt"] + "</li>";
-              qna.innerHTML +=  "<li class = 'list-group-item list-group-item-success' >" + res[0][0]["src"] + "</li>" + "<br/>";
+              qna.innerHTML +=  "<li class= list-group-item>" +"<span style='color:blue;font-weight:bold'>Question : </span>"+ res[0][0]["tgt"] + "</li>";
+              qna.innerHTML +=  "<li class = 'list-group-item list-group-item-success' >" +"<span style='color:red;font-weight:bold'>Answer : </span>"+ res[0][0]["src"] + "</li>" + "<br/>";
             }
         });
       }

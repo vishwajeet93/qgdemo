@@ -39,40 +39,46 @@ class Paragraph extends Component {
         var j = 0;
         console.log(sents);
         this.setState({answers:sents});
+        var n = sents.length;
+        var j = 0;
         for (i in sents){
 
           data[0].src = sents[i];
           dat = JSON.stringify(data);
     //      console.log(data);
-     var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    var targetUrl = 'http://52.172.194.2:7784/translator/translate';
-   fetch(proxyUrl +targetUrl, {
-     method: 'post',
-     headers: {
-       'Accept': 'application/json',
-       'Content-Type': 'application/json'
-     },
-  //  mode : 'no-cors',
-    body: dat
-    })
-  .then(res=> res.json())
-  .then(res=> {
-    var v = {};
-    v.q = res[0][0]["tgt"];
-    v.a = res[0][0]["src"];
-    questions.push(v);
-    //console.log(questions);
-    this.setState({qnas: questions});
-  });
+          var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+          var targetUrl = 'http://52.172.194.2:7789/translator/translate';
+          fetch(proxyUrl +targetUrl, {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            //  mode : 'no-cors',
+            body: dat
+          })
+          .then(res=> res.json())
+          .then(res=> {
+            var v = {};
+            j = j + 1;
+            v.q = res[0][0]["tgt"];
+            v.a = res[0][0]["ans"];
+            questions.push(v);
+            //console.log(questions);
+            this.setState({qnas: questions});
+            if (j == n){
+              setTimeout(() => {
+                // Completed of async action, set loading state back
+                this.setState({ isLoading: false });
+              }, 1000);
+            }
+          });
         }
       }.bind(this),)
       console.log(this.state.qnas);
     //  this.setState(this:self);
       // This probably where you would have an `ajax` call
-      setTimeout(() => {
-        // Completed of async action, set loading state back
-        this.setState({ isLoading: false });
-      }, 2000);
+
     }
 
   render() {

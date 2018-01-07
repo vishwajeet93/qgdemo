@@ -5,7 +5,7 @@ var statusDisplay = null;
 function addBookmark() {
   event.preventDefault();
   var summary = document.getElementById('summary').value;
-  var url = 'http://localhost:9000/?properties=%7B%22annotators%22:%22tokenize,ssplit%22,%22outputFormat%22:%22json%22%7D';
+  var url = 'http://52.172.194.2:9000/?properties=%7B%22annotators%22:%22tokenize,ssplit%22,%22outputFormat%22:%22json%22%7D';
   console.log(summary);
   jQuery.ajax({
   url : url,
@@ -33,7 +33,7 @@ function addBookmark() {
           data[0].src = sents[i];
           dat = JSON.stringify(data);
           console.log(data);
-          var targetUrl = 'http://52.172.194.2:7784/translator/translate';
+          var targetUrl = 'http://52.172.194.2:7786/translator/translate';
           var proxyUrl ='https://cors-anywhere.herokuapp.com/';
           var postUrl = proxyUrl+targetUrl;
         jQuery.ajax({
@@ -45,7 +45,7 @@ function addBookmark() {
             success: function(res) {
                 console.log(res);
               qna.innerHTML +=  "<li class= list-group-item>" +"<span style='color:blue;font-weight:bold'>Question : </span>"+ res[0][0]["tgt"] + "</li>";
-              qna.innerHTML +=  "<li class = 'list-group-item list-group-item-success' >" +"<span style='color:red;font-weight:bold'>Answer : </span>"+ res[0][0]["src"] + "</li>" + "<br/>";
+              qna.innerHTML +=  "<li class = 'list-group-item list-group-item-success' >" +"<span style='color:red;font-weight:bold'>Answer : </span>"+ res[0][0]["ans"] + "</li>" + "<br/>";
             }
         });
       }

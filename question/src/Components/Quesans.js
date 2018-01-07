@@ -12,14 +12,21 @@ class Quesans extends Component {
                   'Named Entities' ,
                   'Noun phrases' ],
       option : 'Named Entities',
+      selopt : '',
       list : [],
       childs : []
     }
     this.sl = this.sl.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
   componentDidMount() {
     console.log('Component DID MOUNT!'),
     this.props.onRef(this)
+  }
+  handleClick(e) {
+    console.log(e.target.value);
+    this.setState({selopt : e.target.value});
+    console.log(this.state.selopt);
   }
   sl(e) {
     var i = e.target.value;
@@ -75,8 +82,8 @@ class Quesans extends Component {
       <div className= "col-sm-6" ref = "list">
       <label for = "sel" className = "col-lg-4"> {this.state.option} :</label>
         <div className = "col-lg-8" ref = "list">
-        <select className = "form-control" id = "sel">
-          {this.state.list.map((op,i) => <option key = {i} ref = {i} value = {i}>
+        <select className = "form-control" ref = "sel" onChange={this.handleClick}>
+          {this.state.list.map((op,i) => <option key = {i} ref = {i} value = {op}>
                                         {op}</option>)}
         </select>
         </div>

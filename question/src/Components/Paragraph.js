@@ -70,7 +70,7 @@ class Paragraph extends Component {
               setTimeout(() => {
                 // Completed of async action, set loading state back
                 this.setState({ isLoading: false });
-              }, 1000);
+              }, 300);
             }
           });
         }

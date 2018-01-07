@@ -18,9 +18,10 @@ class File extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
   onc(eve,results) {
-
+      console.log("edrg");
       const [e, file] = results[0];
       console.log(e.target.result);
+      ReactDOM.findDOMNode(this.refs.filename).innerHTML = "   " + file["name"];
       this.setState({content : e.target.result});
 
   }
@@ -92,18 +93,17 @@ class File extends Component {
     return(
       <div className="container File">
       <br/> <br/><br/>
-      <form>
-            <label for = "file"> Choose File :</label>
-            <FileReaderInput as="text" type="file" id = "file" multipleFiles={false} onChange={this.onc}>
-
-            </FileReaderInput>
+        <label for= "my-file-input"> Choose file :</label>
+        <FileReaderInput as="text" type="file" id ="my-file-input" multipleFiles={false} onChange={this.onc}>
+        <button >Select a file!</button>
+        <span ref = "filename"> No file chosen</span>
+        </FileReaderInput>
             <br />
             <button type="button" className="btn btn-primary"
              disabled={isLoading}
              onClick={!isLoading ? this.handleClick : null} >
              {isLoading ? 'Generating...' : 'Generate'}
            </button>
-     </form>
         <Qna qnas={this.state.qnas} />
       </div>
     );

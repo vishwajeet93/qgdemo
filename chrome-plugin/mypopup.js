@@ -33,9 +33,9 @@ function addBookmark() {
           data[0].src = sents[i];
           dat = JSON.stringify(data);
           console.log(data);
-          var targetUrl = 'http://52.172.194.2:7784/translator/translate';
+          var targetUrl = 'http://52.172.194.2:7789/translator/translate';
           var proxyUrl ='https://cors-anywhere.herokuapp.com/';
-          var postUrl = proxyUrl+targetUrl;
+          var postUrl = targetUrl;
         jQuery.ajax({
             type: "POST",
             data : dat,
@@ -44,8 +44,8 @@ function addBookmark() {
             contentType: "application/json",
             success: function(res) {
                 console.log(res);
-              qna.innerHTML +=  "<li class= list-group-item>" +"<span style='color:blue;font-weight:bold'>Question : </span>"+ res[0][0]["tgt"] + "</li>";
-              qna.innerHTML +=  "<li class = 'list-group-item list-group-item-success' >" +"<span style='color:red;font-weight:bold'>Answer : </span>"+ res[0][0]["src"] + "</li>" + "<br/>";
+              qna.innerHTML +=  "<li class= 'list-group-item list-group-item-info'>" +"<span style='color:blue;font-weight:bold'>Question : </span>"+ res[0][0]["tgt"] + "</li>";
+              qna.innerHTML +=  "<li class = 'list-group-item list-group-item-success' >" +"<span style='color:red;font-weight:bold'>Answer : </span>"+ res[0][0]["ans"] + "</li>" + "<br/>";
             }
         });
       }

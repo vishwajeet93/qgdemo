@@ -16,6 +16,10 @@ class File extends Component {
     }
     this.onc = this.onc.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleChange=this.handleChange.bind(this);
+  }
+  handleChange (event) {
+    this.setState({content: event.target.value});
   }
   onc(eve,results) {
       console.log("edrg");
@@ -88,6 +92,16 @@ class File extends Component {
     // This probably where you would have an `ajax` call
   }
   render(){
+    let Content;
+    if(this.state.content){
+      Content =
+      (
+      <div className="container-fluid">
+      <br/>
+        <textarea value={this.state.content} onChange={this.handleChange} className="form-control" ref = "parainp" rows="10"/>
+        </div>
+    );
+    }
     var isLoading = this.state.isLoading;
 
     return(
@@ -98,6 +112,8 @@ class File extends Component {
         <button >Select a file!</button>
         <span ref = "filename"> No file chosen</span>
         </FileReaderInput>
+
+        {Content}
             <br />
             <button type="button" className="btn btn-primary"
              disabled={isLoading}

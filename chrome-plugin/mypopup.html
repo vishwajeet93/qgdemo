@@ -2,35 +2,35 @@
 <html>
     <head>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="styles.css">
         <style>
-            body {
+/*            body {
                 min-width: 420px;
                 overflow-x: hidden;
                 font-family: Arial, sans-serif;
                 font-size: 12px;
-            }
-            input, textarea {
+            }*/
+/*            input, textarea {
                 width: 400px;
                 resize: none;
-            }
+            }*/
         </style>
         <script src="jquery-3.2.1.min.js"></script>
         <script src="mypopup.js"></script>
     </head>
     <body>
-      <div class="container">
-        <form id="addbookmark">
-          <div class="form-group">
-            <br/>
-            <p><label for="summary"> Sentence / Paragraph </label><br />
-            <textarea class="form-control" id="summary" name="summary" rows="6" cols="35"></textarea></p>
-            <p>
-              <button type="submit" class="btn btn-primary"> Generate </button>
+      <div class="container" >
+          <!-- <label for="summary"> Sentence / Paragraph </label><br /> -->
+            <div class="backdrop" id = "backdrop">
+              <div class="highlights" id = "highlights"></div>
+            </div>
+            <textarea id="summary" name="summary" rows="6" cols="35"></textarea>
+<!--             <p>
+              <button id = "addbookmark" class="btn btn-primary"> Generate </button>
               <span id="status-display"></span>
             </p>
-            <ul class="list-group" id="qna"></ul>
-          </div>
-        </form>
+            <ul class="list-group" id="qna"></ul> -->
+
       </div>
     </body>
 </html>

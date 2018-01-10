@@ -4,6 +4,7 @@ import axios from 'axios';
 import ReactDOM from 'react-dom';
 import Qna from './Qna';
 import Dropdown from 'react-dropdown';
+import Sent from './Sent';
 
 class Paragraph extends Component {
   constructor() {
@@ -40,6 +41,7 @@ class Paragraph extends Component {
           sent = '';
         }
         if (this.state.content !== para){
+          this.setState({qnas:[]});
           this.setState({sentences: sents});
           var i1 = this.state.i + 1;
           this.setState({i:i1});
@@ -57,14 +59,6 @@ class Paragraph extends Component {
               this.setState({answers:sents});
               var n = 0;
               var j = 0;
-              for (i in sents) {
-                if (this.state.childs[i].state.opt1 == ''){
-                  console.log("yeey");
-                  alert('please select options for all questions')
-                  break;
-                  console.log("yeey");
-                }
-              }
               for (i in sents){
                 console.log(this.state.childs[i]);
                 console.log('opt1',this.state.childs[i].opt1);
@@ -78,12 +72,21 @@ class Paragraph extends Component {
                 else {
                   n++;
                   this.setState({ isLoading: true });
-                  data[0].src = sents[i];
-                  data[0].selans = this.state.childs[i].state.opt2;
+                  var sel = this.state.childs[i].state.opt1;
+                  var targetUrl;
+                  if(sel == 'Choose automatically'){
+                    targetUrl = "http://52.172.194.2:7789/translator/translate";
+                    data[0].src = sents[i];
+                  }
+                  else {
+                    targetUrl = "http://52.172.194.2:7790/translator/translate";
+                    data[0].src = sents[i];
+                    data[0].selans = this.state.childs[i].state.opt2;
+                  }
                   dat = JSON.stringify(data);
                   //      console.log(data);
                   var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-                  var targetUrl = 'http://52.172.194.2:7790/translator/translate';
+
                   fetch(proxyUrl +targetUrl, {
                     method: 'post',
                     headers: {
@@ -115,7 +118,7 @@ class Paragraph extends Component {
                 }
               }
             }
-          }.bind(this),)
+          }.bind(this))
       console.log(this.state.qnas);
     //  this.setState(this:self);
       // This probably where you would have an `ajax` call
@@ -132,8 +135,10 @@ class Paragraph extends Component {
       <form>
             <textarea className="form-control" ref = "parainp" rows="10">Donald Trump is the president of United States</textarea>
             <br/>
-            {this.state.sentences.map((sen,i) => <Sent onRef={ref => (this.state.childs.push(ref))}
-            key={i} sent = {sen}/>)}
+            {this.state.sentences.map((sen,i) =>{return <div class="list-group">
+            <li className="list-group-item list-group-item-warning"><Sent onRef={ref => (this.state.childs.push(ref))}
+            key={i} sent = {sen}/></li><br/></div>})}
+            <br/>
             <button type="button" className="btn btn-primary"
              disabled={isLoading}
              onClick={!isLoading ? this.handleClick : null} >
@@ -147,69 +152,5 @@ class Paragraph extends Component {
   }
 }
 
-class Sent extends Component {
-  constructor() {
-    super();
 
-    this.state = {
-        opt1 : '',
-        opt2 : '',
-        list : []
-    }
-    this._onSelect = this._onSelect.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-  }
-  componentDidMount() {
-    this.props.onRef(this)
-  }
-  handleClick(e) {
-    this.setState({opt2 : e.target.value});
-    console.log(this.state.opt1);
-    console.log(this.state.opt2);
-  }
-  _onSelect(e) {
-    console.log(e.label);
-    this.setState({opt1 : e.label});
-    var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    var url = "http://52.172.194.2:5000/cag?sent="+this.props.sent;
-    axios.get(proxyUrl + url)
-    .then(res => {
-      var op = this.state.opt1
-      if (op == 'Named Entities'){
-        this.setState({list:res.data[0]["Paragraphs:"][0]["Named Entities:"]});
-      }
-      if (op == 'Noun Phrases'){
-        this.setState({list:res.data[0]["Paragraphs:"][0]["Noun Phrases:"]});
-      }
-    })
-
-
-  }
-  render(){
-    var options = ['Named Entities' , 'Noun Phrases']
-    const defaultOption = options[0]
-    return (
-      // <div>
-      //   <li> {this.props.sent} </li>
-
-      <div className = "container">
-      <div className = "col-sm-5">
-      {this.props.sent}
-      </div>
-      <div className = "col-sm-2">
-        <Dropdown options={options} onChange={this._onSelect}  placeholder="option" />
-      </div>
-      <div className= "col-sm-5" ref = "list">
-      <label htmlFor = "sel" className = "col-lg-4"> {this.state.opt1} :</label>
-        <div className = "col-lg-8" ref = "list">
-        <select className = "form-control" ref = "sel" onChange={this.handleClick}>
-          {this.state.list.map((op,i) => <option key = {i} ref = {i} value = {op}>
-                                        {op}</option>)}
-        </select>
-          </div>
-        </div>
-      </div>
-    )
-  }
-}
 export default Paragraph;

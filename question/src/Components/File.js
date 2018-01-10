@@ -3,6 +3,7 @@ import FileReaderInput from 'react-file-reader-input';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
 import Qna from './Qna';
+import Sent from './Sent';
 
 
 class File extends Component {
@@ -12,7 +13,10 @@ class File extends Component {
     this.state = {
       isLoading : false,
       content : '',
-      qnas : []
+      qnas : [],
+      childs : [],
+      con : '',
+      sentences :[]
     }
     this.onc = this.onc.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -31,13 +35,13 @@ class File extends Component {
   }
   handleClick() {
     var questions = [];
-    this.setState({ isLoading: true });
     var url = 'http://localhost:9000/?properties=%7B%22annotators%22:%22tokenize,ssplit%22,%22outputFormat%22:%22json%22%7D';
-    console.log(this.state.content);
-    var para = this.state.content;
-    console.log(para);
+    // console.log(this.state.content);
+    var para =this.state.content;
     // console.log(para);
+     console.log('a');
     axios.post(url,para).then(function(res){
+
       var sentsarr = res.data["sentences"];
       var sents = [];
       var sent = '';
@@ -48,47 +52,85 @@ class File extends Component {
         sents.push(sent);
         sent = '';
       }
-      var data = [{"src" :null,"beam_size":5,"replace_unk":"true",
-          "withAttn":"true"}];
-      var i,dat;
-      var j = 0;
-      console.log(sents);
-      this.setState({answers:sents});
-      var n = sents.length;
-      var j =0;
-      for (i in sents){
-
-        data[0].src = sents[i];
-        dat = JSON.stringify(data);
-  //      console.log(data);
-        var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        var targetUrl = 'http://52.172.194.2:7789/translator/translate';
-        fetch(proxyUrl +targetUrl, {
-          method: 'post',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          //  mode : 'no-cors',
-          body: dat
-        })
-        .then(res=> res.json())
-        .then(res=> {
-          var v = {};
-          v.q = res[0][0]["tgt"];
-          v.a = res[0][0]["ans"];
-          questions.push(v);
-          //console.log(questions);
-          this.setState({qnas: questions});
-          if (j == n){
-            setTimeout(() => {
-              // Completed of async action, set loading state back
-              this.setState({ isLoading: false });
-            }, 1000);
-          }
-        });
+      if (this.state.con !== para){
+        this.setState({qnas:[]});
+        this.setState({sentences: sents});
+        var i1 = this.state.i + 1;
+        this.setState({i:i1});
+        this.setState({con : para});
+        // alert('awg')
+        // break;
+        console.log("yeey");
       }
-    }.bind(this),)
+      else {
+        var data = [{"src" :null,"beam_size":5,"replace_unk":"true",
+            "withAttn":"true"}];
+            var i,dat;
+            var j = 0;
+            console.log(sents);
+            this.setState({answers:sents});
+            var n = 0;
+            var j = 0;
+            for (i in sents){
+              console.log('chi',this.state.childs);
+              console.log('opt1',this.state.childs[i].opt1);
+              if (this.state.childs[i].state.opt1 == ''){
+                console.log("yeey");
+                //alert('please select options for all questions')
+                //this.setState({isLoading : false});
+                break;
+                console.log("yeey");
+              }
+              else {
+                n++;
+                this.setState({ isLoading: true });
+                var sel = this.state.childs[i].state.opt1;
+                var targetUrl;
+                if(sel == 'Choose automatically'){
+                  targetUrl = "http://52.172.194.2:7789/translator/translate";
+                  data[0].src = sents[i];
+                }
+                else {
+                  targetUrl = "http://52.172.194.2:7790/translator/translate";
+                  data[0].src = sents[i];
+                  data[0].selans = this.state.childs[i].state.opt2;
+                }
+                dat = JSON.stringify(data);
+                //      console.log(data);
+                var proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+
+                fetch(proxyUrl +targetUrl, {
+                  method: 'post',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  //  mode : 'no-cors',
+                  body: dat
+                })
+                .then(res=> res.json())
+                .then(res=> {
+                  var v = {};
+                  j = j + 1;
+                  v.q = res[0][0]["tgt"];
+                  v.a = res[0][0]["ans"];
+                  questions.push(v);
+                  //console.log(questions);
+                  this.setState({qnas: questions});
+                  if (j == n){
+                    setTimeout(() => {
+                      // Completed of async action, set loading state back
+                      this.setState({ isLoading: false });
+                    }, 300);
+                  }
+                }).catch(err => {
+                  this.setState({isLoading : false});
+                  alert(err);
+                });
+              }
+            }
+          }
+        }.bind(this))
     // This probably where you would have an `ajax` call
   }
   render(){
@@ -112,9 +154,11 @@ class File extends Component {
         <button >Select a file!</button>
         <span ref = "filename"> No file chosen</span>
         </FileReaderInput>
-
-        {Content}
+          {Content}
             <br />
+            {this.state.sentences.map((sen,i) =>{return <div class="list-group">
+            <li className="list-group-item list-group-item-warning"><Sent onRef={ref => (this.state.childs.push(ref))}
+            key={i} sent = {sen}/></li><br/></div>})}
             <button type="button" className="btn btn-primary"
              disabled={isLoading}
              onClick={!isLoading ? this.handleClick : null} >
